@@ -1,0 +1,7 @@
+这种是使用最原始的文件配置  shiro.ini 并将用户写死在文件中
+
+参考：https://waylau.gitbooks.io/apache-shiro-1-2-x-reference/content/I.%20Overview%20%E6%80%BB%E8%A7%88/2.%20Tutorial%20%E6%95%99%E7%A8%8B.html
+
+这个例子就是在API上的例子，完全模仿
+
+备注:这个网址是从网上找的 如有问题请联系本人删除  邮箱1194821568@qq.com
