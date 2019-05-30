@@ -1,11 +1,19 @@
 package com.help.demo;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.Account;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authz.AuthorizationException;
+import org.apache.shiro.authz.Permission;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresGuest;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.apache.shiro.authz.annotation.RequiresUser;
 import org.apache.shiro.config.IniSecurityManagerFactory;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
@@ -21,6 +29,9 @@ public class Tutorial {
 	
 	        log.info("My First Apache Shiro Application");
 	        
+	        //用户未知情况下调用 
+             signUp("这里可以传用户");//关于用户已知未知请参考下面Amazon的例子
+             
 	        //1.使用 Shiro 的 IniSecurityManagerFactory 加载了我们的shiro.ini 文件，
 	        //该文件存在于 classpath 根目录里。这个执行动作反映出 shiro 支持 
 	        //Factory Method Design Pattern（工厂模式）。classpath：资源的指示前缀，
@@ -35,13 +46,20 @@ public class Tutorial {
 	        //在这个简单示例中，这是可以的，但在其它成熟的应用环境中，通常会将 SecurityManager 
 	        //放在程序指定的存储中（如在 web 中的 ServletContexct 或者 Spring、Guice、 JBoss DI 容器实例）中。
 	        SecurityUtils.setSecurityManager(securityManager);
-	        
 	        //在几乎所有的环境中，你可以通过如下语句得到当前用户的信息：
 	        //Subject是一个安全术语意思是“当前运行用户的指定安全视图（a security-specific view of the currently executing user）”
 	        //安全认证中，“Subject”可以认为是一个人，也可以认为是第三方进程、时钟守护任务、
 	        //守护进程帐户或者其它。它可简单描述为“当前和软件进行交互的事件”，
 	        //在大多数情况下，你可以认为它是一个“人（User）”。
 	        Subject currentUser = SecurityUtils.getSubject();
+	        
+	        //这段是将上面3个步骤在程序中配置 需要自己定义一个Realm类 这样就可以直接在程序中写代码不用配置 ini文件了 
+	       /* Realm realm = //实例化或获得一个Realm的实例。我们将稍后讨论Realm。
+
+    		SecurityManager securityManager = new DefaultSecurityManager(realm);
+
+    		//使SecurityManager实例通过静态存储器对整个应用程序可见：
+    		SecurityUtils.setSecurityManager(securityManager);*/
 	        
 	        // 做点跟 Session 相关的事
 	        Session session = currentUser.getSession();
@@ -50,13 +68,14 @@ public class Tutorial {
 	        if (value.equals("aValue")) {
 	            System.out.println("Retrieved the correct value! [" + value + "]");
 	        }
-	        
+	       
 	        if ( !currentUser.isAuthenticated() ) {
 	            //收集用户的主要信息和凭据，来自GUI中的特定的方式
 	            //如包含用户名/密码的HTML表格，X509证书，OpenID，等。
 	            //我们将使用用户名/密码的例子因为它是最常见的。
 	        	//下面的 lonestarr  vespa 是在配置文件中的用户名和密码 例 username = password, role1, role2, ..., roleN
-	            //可以每一个用户都试一试看看有什么不同
+	            //可以每一个用户都试一试看看有什么不同  
+	        	//最大权限root secret
 	        	UsernamePasswordToken token = new UsernamePasswordToken("lonestarr", "vespa");
 
 	            //支持'remember me' (无需配置，内建的!):
@@ -95,6 +114,56 @@ public class Tutorial {
 	            currentUser.login(token);
 	            //无异常，说明就是我们想要的!
 	            System.out.println("//无异常，说明就是我们想要的!");
+	            
+	            //登录成功后的一些操作
+	            //查看一个 Subject 是否有特定（单独）的角色，你可以调用subject.hasRole(roleName))方法，做出相应的反馈。
+	            if (currentUser.hasRole("admin")) {
+	                //显示 admin 按钮
+	            	System.out.println("有这个角色");
+	            } else {
+	                //不显示按钮?  灰色吗？
+	            	System.out.println("无这个角色");
+	            }
+	            
+	            //你可以在的代码执行之前简单判断他们是否是所要求的角色，如果 Subject 不是所要求的角色， 
+	            //AuthorizationException 异常将被抛出，如果是所要求的角色，判断将安静地执行并按期望顺序执行下面的逻辑。
+	            //保证当前用户是一个银行出纳员
+	            //因此允许开立帐户：
+	            currentUser.checkRole("bankTeller");//控制台如果出现这个错误就是没有权限 Subject does not have role [bankTeller]
+	          //openBankAccount();这个是你自己的方法
+	            
+	            
+	            // 备注 PrinterPermission这个需要自己新建一个类 报错时直接选择创建 并将添加构造函数
+	            //例如，假设一下以下情景：办公室里有一台唯一标识为 laserjet4400n 的打印机，
+	            //在我们向用户显示打印按钮之前，软件需要检查当前用户是否允许用这台打印机打印文档，检查权限的方式会是这样
+	            Permission printPermission = new PrinterPermission("laserjet4400n", "print");
+	            //这里的权限是要和资源关联的 目前没想到如何实现
+	            if (currentUser.isPermitted(printPermission)) {
+	                //显示 打印 按钮
+	            	System.out.println("有打印权限");
+	            } else {
+	                //不显示按钮?  灰色吗？
+	            	System.out.println("无打印权限");
+	            }
+	            
+	            //用户已知的情况下调用方法
+	             updateAccount(null);
+	             
+	              //当前 Session 中被验证过或者在以前的 Session 中被记住过
+	             updateAccount2(null);
+	             
+	             
+	             //用户未知情况下调用
+	             signUp(value);
+	             
+	             //至少要有一个权限 
+	             createAccount(null);
+	             createAccount2(null);
+	             
+	             //表示要求当前Subject在执行被注解的方法时具备所有的角色
+	             //可以将上面的用户换成有admin权限的 下面才会输出
+	             deleteUser(value);
+	            
 	        } catch ( UnknownAccountException uae ) {
 	        	System.out.println(" //username 不存在，给个错误提示?");
 	            //username 不存在，给个错误提示?
@@ -150,5 +219,62 @@ public class Tutorial {
 	        
 	        System.exit(0);
 	}
+	
+	//RequiresAuthentication 注解表示在访问或调用被注解的类/实例/方法时，要求 Subject 在当前的 session中已经被验证。
+	@RequiresAuthentication
+	public static void updateAccount(Account userAccount) {
+		//正常这个方法不用静态 只是因为我直接使用main方法调用 才需要加上static
+	    //这个方法只会被调用在
+	    //Subject 保证被认证的情况下
+	    System.out.println("可以调用");
+	}
+	
+	
+	//RequiresUser* 注解表示要求在访问或调用被注解的类/实例/方法时，
+	//当前 Subject 是一个程序用户，“程序用户”是一个已知身份的 Subject，
+	//或者在当前 Session 中被验证过或者在以前的 Session 中被记住过。
+	@RequiresUser
+	public static void updateAccount2(Account account) {
+	    //这个方法只会被 'user' 调用 
+	    //i.e. Subject 是一个已知的身份with a known identity
+	    System.out.println("当前 Session 中被验证过或者在以前的 Session 中被记住过");
+	}
+	
 
+	//RequiresGuest 注解表示要求当前Subject是一个“guest(访客)”，也就是，
+	//在访问或调用被注解的类/实例/方法时，他们没有被认证或者在被前一个Session 记住。
+	@RequiresGuest
+	public static void signUp(String newUser) {
+		
+	    //这个方法只会被调用在
+	    //Subject 未知/匿名的情况下
+	    System.out.println("用户未知情况下调用");
+	}
+	
+	
+	//RequiresRoles 注解表示要求当前Subject在执行被注解的方法时具备所有的角色，否则将抛出 
+	@RequiresRoles("admin")
+	public static void deleteUser(String user) {
+	    //这个方法只会被 administrator 调用 
+	    System.out.println("表示要求当前Subject在执行被注解的方法时具备所有的角色");
+	}
+	
+	//RequiresPermissions 注解表示要求当前Subject在执行被注解的方法时具备一个或多个对应的权限
+	@RequiresPermissions("account:create")
+	public static void createAccount(Account account) {
+	    //这个方法只会被调用在
+	    //Subject 允许创建一个 account 的情况下
+	    System.out.println("RequiresPermissions 注解表示要求当前Subject在执行被注解的方法时具备一个或多个对应的权限。");
+	}
+	
+	//这个这个和上面的注解方法时一样的功能。但输出的现在不一样 上面的可以直接执行 下面的报异常
+	public static void createAccount2(Account account) {
+	    Subject currentUser = SecurityUtils.getSubject();
+	    if (!currentUser.isPermitted("account:create")) {
+	        throw new AuthorizationException();
+	    }
+	    System.out.println("这个和上面的注解方法时一样的功能");
+	    //在这里 Subject 确保是允许
+	    
+	}
 }
