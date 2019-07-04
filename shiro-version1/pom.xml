@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.5.21.RELEASE</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.wushuagn</groupId>
+	<artifactId>shiro-version1</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>shiro-test</name>
+	<description>Demo project for Spring Boot</description>
+
+	<properties>
+		<java.version>1.8</java.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		
+		<!-- springboot 整合mybatis 依赖 -->
+		<dependency>
+			<groupId>org.mybatis.spring.boot</groupId>
+			<artifactId>mybatis-spring-boot-starter</artifactId>
+			<version>1.3.4</version>
+		</dependency>
+
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+        <!-- springboot 整合mybatis 依赖 -->	
+        
+		<dependency>
+	        <groupId>org.springframework</groupId>
+	        <artifactId>spring-tx</artifactId>
+	        <version>4.3.18.RELEASE</version>
+	    </dependency>
+	    
+	    <!--添加swagger依赖  -->
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+			<version>2.6.1</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>2.6.1</version>
+		</dependency>
+		<!--添加swagger依赖  -->
+		
+		  <!--分页插件-->
+		<dependency>
+		    <groupId>com.github.pagehelper</groupId>
+		    <artifactId>pagehelper</artifactId>
+		    <version>4.1.1</version>
+		</dependency>
+		<!--通用Mapper-->
+		<dependency>
+		    <groupId>tk.mybatis</groupId>
+		    <artifactId>mapper-spring-boot-starter</artifactId>
+		    <version>2.0.0</version>
+		</dependency>
+		
+         <!-- 下面这个依赖可以使用 @getter @setter 注解  正常整合通用mapper只要添加上面两个依赖就可以了  下面这个依赖是我要改变user实体类需要的 这样实体类中就可以不用添加 getset方法而改用使用注解-->
+		  <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!-- 添加事物 -->
+        <dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jdbc</artifactId>
+		</dependency>
+		
+		<!-- 添加日志 -->
+		 <dependency>
+		     <groupId>org.springframework.boot</groupId>
+		     <artifactId>spring-boot-starter-logging</artifactId>
+		</dependency>
+		 <dependency>
+		 	<groupId>org.scala-lang</groupId>
+		 	<artifactId>scala-library</artifactId>
+		 	<version>2.11.0</version>
+		 </dependency>
+
+
+		 <dependency>
+		 	<groupId>org.apache.shiro</groupId>
+		 	<artifactId>shiro-core</artifactId>
+		 	<version>1.2.4</version>
+		 </dependency>
+		 <dependency>
+			<groupId>org.apache.shiro</groupId>
+			<artifactId>shiro-spring</artifactId>
+			<version>1.4.0</version>
+		 </dependency>
+		 
+		 <dependency>
+		   <groupId>org.springframework.boot</groupId>
+		   <artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-starter-aop</artifactId>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

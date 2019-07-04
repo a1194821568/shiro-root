@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>Insert title here</title>
+</head>
+<body>
+<form method="post" id="useradd"  onsubmit="return false">
+	userName: <input type="text" name="userName"><br><br>
+	loginName: <input type="text" name="loginName"><br><br>
+	Password: <input type="password" name="password"><br><br>
+	<input type="button" value="添加用户" onclick="add()"> 
+</form>
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<script type="text/javascript" src="/js/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/js/extJquery.js"></script>
+<script type="text/javascript" src="/js/extEasyUI.js"></script>
+<script type="text/javascript">
+function add(){
+	
+	$.ajax({
+		type:"POST",
+		dataType:"text",
+		url:"http://localhost:8080/user/add",
+		data:$("#useradd").serialize(),
+		success:function(result){
+			alert(result)
+		}
+	})
+}
+
+</script>
+</body>
+</html>

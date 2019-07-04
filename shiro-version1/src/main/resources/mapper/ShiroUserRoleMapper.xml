@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhanghui.mapper.ShiroUserRoleMapper">
+
+	<!--直接写resultType="实体类"，这样返回列表的话就自动变成了List<实体类>-->
+	<select id="selectByUserId" resultType="com.zhanghui.entity.ShiroUserRole" parameterType="Long">
+		select * from shiro_user_role where user_id = #{id}
+	</select>
+</mapper>
