@@ -8,6 +8,7 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
@@ -49,7 +50,7 @@ public class MyShiroRealm extends AuthorizingRealm{
 	            authorizationInfo.addRole(role.getRole());
 	            for(ShiroMenuPermissionRole p:role.getList()){
 	            	//这里我将权限的ID直接放入了权限控制中  可以考虑是否在根据权限的ID去数据库的资源表中将具体的资源或者按钮取到放到这里
-	            	//正确的做法是要在这里存入shiro_menu 表中的 permission字段的
+	            	//正确的做法是要在这里存入shiro_menu 表中的 permission字段的 然后在对应的需要验证的方法上加入对应的权限 例 @RequiresPermissions("6")
 	            	System.out.println(p.getMenuId());
 	                authorizationInfo.addStringPermission(p.getMenuId().toString());
 	            }
