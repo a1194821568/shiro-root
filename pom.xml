@@ -19,7 +19,8 @@
 	
 	<modules>
 	     <module>shiro-demo</module>
-	     <module>shiro-tutorial</module>
+	     <module>shiro-tutorial</module> 
+		 <module>shiro-version1</module>
 	</modules>
 	
 	<dependencies>
